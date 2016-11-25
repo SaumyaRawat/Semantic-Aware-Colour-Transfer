@@ -1,4 +1,4 @@
-function[out]=scene_parse(im)
+function[out,responses]=scene_parse(im)
 	tic;
 	caffe.set_mode_cpu();
 	net_weights = ['FCN_scene_parsing.caffemodel'];
@@ -18,7 +18,7 @@ function[out]=scene_parse(im)
 	% array containing data from output blob(s)
 	scores = net.forward(input_data);
 	toc;
-
+	responses = scores;
 	scores = scores{1};
 	[v,out_m]=max(scores,[],3);
 	out=fliplr(imrotate(label2rgb(out_m-ones(500,500)),-90));
