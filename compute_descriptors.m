@@ -1,6 +1,6 @@
 %% This file computes the semantic descriptor and saves in variable descriptor(no_of_images).desc in the desc.mat %%
-reponse_map = 'images_1'; %check filename
-%reponse_map = 'fcn_1'; %check filename %for atom
+%reponse_map = 'images_1'; %check filename
+reponse_map = 'fcn_1'; %check filename %for atom
 mat_file = ['mat_files/',reponse_map];
 %mat_file = ['/Neutron9/anjali.shenoy/dip_project/mat_files/',reponse_map];
 

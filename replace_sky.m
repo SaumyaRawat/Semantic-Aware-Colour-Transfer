@@ -1,7 +1,8 @@
 %% Compare between decriptors of all images and choose reference image %%
 addpath(genpath('custom_toolboxes'))
 mat_file = ['mat_files/','descriptor_1']; %check filename
-load(mat_file);  
+load(mat_file); 
+load(['mat_files/','max_rects']); 
 no_of_images = size(descriptor,2);
 
 I = dir('dataset/image/*.png');
@@ -15,7 +16,9 @@ target_sky_mask = im2bw(imread('input_mask.png'));
 target = imresize(A, [500 500]);
 [~,rough_mask,res] = scene_parse(target);
 F = res{1};
-norm_F = (F - min(F(:)))/(max(F(:))-min(F(:)));
+for i=1:size(target,1)
+    for j=1:size(target,2)
+        norm_F(i,j,:) = (F(i,j,:) - min(F(i,j,:)))/(max(F(i,j,:))-min(F(i,j,:)));
 
 %%%%%%%%%% Compute target's descriptor '%%%%%%%%%%%
 H = [];

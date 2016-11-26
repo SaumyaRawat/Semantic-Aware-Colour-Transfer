@@ -15,7 +15,9 @@ for k = 1:size(I,1)
     %images(k).parsing = imread(['dataset/parsing/',P(k).name]);
     [~,rough_mask,res] = scene_parse(images(k).image);
     images(k).F = res{1};
-    images(k).norm_F = (images(k).F - min(images(k).F(:)))/(max(images(k).F(:))-min(images(k).F(:)));
+    for i = 1:size(images(k).image,1)
+    	for j = 1:size(images(k).image,2)
+    		images(k).norm_F(i,j,:) = (images(k).F(i,j,:) - min(images(k).F((i,j,:))))/(max(images(k).F((i,j,:)))-min(images(k).F((i,j,:))));
     waitbar(k / size(I,1))
 end
 close(h);
