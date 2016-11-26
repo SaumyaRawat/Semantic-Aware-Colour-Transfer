@@ -3,8 +3,6 @@ addpath('functions')
 tic;
 h = waitbar(0,'Computing response maps.. ')
 
-A=imread('input.png');
-target = imresize(A, [500 500]);
 
 I = dir('dataset/image/*.png');
 M = dir('dataset/mask/*.png');
