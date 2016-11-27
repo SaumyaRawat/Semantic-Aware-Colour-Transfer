@@ -63,12 +63,12 @@ semantic_similarity = [];
 for k = 1:no_of_images
     source = imread(['dataset/image/',P(k).name]);
     source_sky_mask = im2bw(imread(['dataset/mask/',P(k).name]));
-    if isempty(find(source_sky_mask==0))
+    
+    if (max_rects(k).max_source_region == 0)
        continue;
     end
-    [S,~,~,max_source_region,sr1,sr2,sc1,sc2] = FindLargestRectangles((source_sky_mask),source);
-    max_rects(k).max_source_region = max_source_region;
-    max_rects(k).index = [sr1,sr2,sc1,sc2];
+    [S,max_source_region] = [max_rects(k).S max_rects(k).max_source_region];
+    [sr1,sr2,sc1,sc2] = max_rects(k).index;
     %% Compute Aspect Ratio and Resolution
     s_width = sc2-sc1;
     s_height = sr2-sr1;
