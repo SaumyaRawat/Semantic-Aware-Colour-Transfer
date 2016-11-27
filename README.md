@@ -20,3 +20,5 @@
 * Code requires caffe-cpu
 * Mat files present in mat_files (on git-lfs) are required to run the code
 * main.m consists of the pipeline execution, name of input image from the dataset provided in the dataset folder is added to file1. 
+* The large files are present in the google drive : https://drive.google.com/open?id=0B3Z3CBsZVuvVMU5NYkMwS200RDQ
+These MUST be downloaded for the code to run.

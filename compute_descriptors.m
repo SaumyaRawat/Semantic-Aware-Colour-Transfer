@@ -1,21 +1,19 @@
 %% This file computes the semantic descriptor and saves in variable descriptor(no_of_images).desc in the desc.mat %%
 abacus_path = '/lustre/ameya/Anjali/dip_project/';
+atom_path = '/Neutron9/anjali.shenoy/dip_project/';
 reponse_map = 'fcn_data_212'; %check filename %for atom
-mat_file = [abacus_path, 'mat_files/',reponse_map];
-%mat_file = ['/Neutron9/anjali.shenoy/dip_project/mat_files/',reponse_map];
+mat_file = ['mat_files/',reponse_map];
 
-%T = load(mat_file,reponse_map);  
 reponse_map = images;%T.(reponse_map);
 no_of_images = size(reponse_map,2);
 %w = waitbar(0,'Computing semantic descriptors')
-I = dir([abacus_path,'dataset/image/*.png']);
-%I = dir('/Neutron9/anjali.shenoy/dip_project/dataset/image/*.png');
+I = dir(['dataset/image/*.png']);
 im_index = 1; %check filename
+
 % Construct Semantic Descriptor
 for k = 1:no_of_images
     H = [];
     temp = imread([abacus_path,'dataset/image/',I(im_index).name]);
-    %temp = imread(['/Neutron9/anjali.shenoy/dip_project/dataset/image/',I(im_index).name]);
     im = imresize(temp,[500 500]);
     sz = size(im);
     m = prod(sz(1:2));
@@ -34,7 +32,6 @@ for k = 1:no_of_images
         end
     end
     global_histFig = figure('Name','Histogram','NumberTitle','off','Visible','off');
-    %global_hist = histogram(im(:,:,:),14,'BinLimits',[0 1],'Normalization','probability','Visible','off');
     global_hist = histcounts(im(:,:,:),14);
     global_hist = global_hist/max(max(global_hist));
     H = [H ; global_hist];
@@ -45,4 +42,3 @@ for k = 1:no_of_images
 end
 close(w)
 save([abacus_path,'mat_files/descriptor_212.mat'],'descriptor')
-%save('/Neutron9/anjali.shenoy/dip_project/mat_files/descriptor_1.mat','descriptor') %for atom
