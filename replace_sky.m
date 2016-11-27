@@ -1,16 +1,12 @@
 %% Compare between decriptors of all images and choose reference image %%
-addpath(genpath('custom_toolboxes'))
-%%%% MAT FILES %%%%
-load(['mat_files/','descriptor_1']); 
-load(['mat_files/','max_rects']); 
-no_of_images = size(descriptor,2);
-
-I = dir('dataset/image/*.png');
-P = dir('dataset/mask/*.png');
-
-function[I_rep,I_ref] = replace_sky(A,im2bw(target_sky_mask))
+function[rough_mask,I_rep,I_ref,ref_region,norm_F,ref_im_name] = replace_sky(A,target_sky_mask,descriptor,max_rects)
+    addpath(genpath('custom_toolboxes'))
+    I = dir('dataset/image/*.png');
+    P = dir('dataset/mask/*.png');
+    target_sky_mask = im2bw(target_sky_mask);
     im_index = 1; %check filename
     threshold = 4;
+    no_of_images = size(descriptor,2);
     %A=imread('input.png');
     %target_sky_mask = im2bw(imread('input_mask.png'));
     %target_sky_mask = imresize(target_sky_mask,[500 500]);
@@ -100,43 +96,24 @@ function[I_rep,I_ref] = replace_sky(A,im2bw(target_sky_mask))
         end
     end
     if chosen_sky~=1
-        [source,index]=select_image(no_of_chosen_skies,options,I);
+        [index]=select_image(no_of_chosen_skies,options,I);
     end
-
+    source = imread(['dataset/image/',I(options(index)).name]);
+    ref_im_name = I(options(index)).name;
     %%%%%%%%% replace sky using the chosen image %%%%%%%%%%%
+    S = max_rects(options(index)).region;
     [T,tmax_area,tr1,tr2,tc1,tc2]  = find_largest_convex_hull(target_sky_mask,A);
     source_sky = imresize(S,[size(T,1) size(T,2)]);
     I_rep = A;
-    for i = 1:size(final,1)
-        for j=1:size(final,2)
+    for i = 1:size(I_rep,1)
+        for j=1:size(I_rep,2)
             if(target_sky_mask(i,j)==1)
                 I_rep(i,j,:) = source_sky(i,j,:);
             end
         end
     end
     I_ref = source;
-    %figure;imshowpair(target,final,'montage');str = sprintf('Original & Final Image');title(str);
+    [~,ref_region,~] = scene_parse(I_ref);
+    %figure;imshowpair(target,I_rep,'montage');str = sprintf('Original & Final Image');title(str);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %source_sky=im2double(source_sky);
-
-    %figure('Name','Image for source sky selection','NumberTitle','off')
-    %imshow(source); %Display the superpixels of the image
-    %hold on;
-    %h2 = imfreehand;
-    %source_sky = im2double(h2.createMask);
-    %source = im2double(source);
-    %target = im2double(target);
-
-    %levels = 7;
-    %lpyramids_source = laplPyramid(target,levels); 
-    %lpyramids_target = laplPyramid(source,levels);
-    %blur_border = imgaussfilt(mat2gray(~source_sky),1.2);
-
-    %for k = 1:levels
-    %    blur_border = imresize(blur_border,[size(lpyramids_source(k).im,1) size(lpyramids_source(k).im,2)]);
-    %    blended(k).im(:,:,1) = (( (lpyramids_source(k).im(:,:,1)) .* blur_border) + ( (lpyramids_target(k).im(:,:,1)) .* (1-blur_border)))/255;
-    %    blended(k).im(:,:,2) = (( (lpyramids_source(k).im(:,:,2)) .* blur_border) + ( (lpyramids_target(k).im(:,:,2)) .* (1-blur_border)))/255;
-    %    blended(k).im(:,:,3) = (( (lpyramids_source(k).im(:,:,3)) .* blur_border) + ( (lpyramids_target(k).im(:,:,3)) .* (1-blur_border)))/255;
-    %end
-    %final = reconstruct(blended);
 end

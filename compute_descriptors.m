@@ -1,20 +1,20 @@
 %% This file computes the semantic descriptor and saves in variable descriptor(no_of_images).desc in the desc.mat %%
-%reponse_map = 'images_1'; %check filename
+abacus_path = '/lustre/ameya/Anjali/dip_project/';
 reponse_map = 'fcn_data_212'; %check filename %for atom
-mat_file = ['mat_files/',reponse_map];
+mat_file = [abacus_path, 'mat_files/',reponse_map];
 %mat_file = ['/Neutron9/anjali.shenoy/dip_project/mat_files/',reponse_map];
 
-T = load(mat_file,reponse_map);  
-reponse_map = T.(reponse_map);
+%T = load(mat_file,reponse_map);  
+reponse_map = images;%T.(reponse_map);
 no_of_images = size(reponse_map,2);
 %w = waitbar(0,'Computing semantic descriptors')
-I = dir('dataset/image/*.png');
+I = dir([abacus_path,'dataset/image/*.png']);
 %I = dir('/Neutron9/anjali.shenoy/dip_project/dataset/image/*.png');
 im_index = 1; %check filename
 % Construct Semantic Descriptor
 for k = 1:no_of_images
     H = [];
-    temp = imread(['dataset/image/',I(im_index).name]);
+    temp = imread([abacus_path,'dataset/image/',I(im_index).name]);
     %temp = imread(['/Neutron9/anjali.shenoy/dip_project/dataset/image/',I(im_index).name]);
     im = imresize(temp,[500 500]);
     sz = size(im);
@@ -44,5 +44,5 @@ for k = 1:no_of_images
     clear temp, H, im
 end
 close(w)
-save('mat_files/descriptor_212.mat','descriptor')
+save([abacus_path,'mat_files/descriptor_212.mat'],'descriptor')
 %save('/Neutron9/anjali.shenoy/dip_project/mat_files/descriptor_1.mat','descriptor') %for atom

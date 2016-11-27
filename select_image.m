@@ -1,4 +1,4 @@
-function[image,index]=select_image(k,options,I)
+function[index]=select_image(k,options,I)
   hfig=figure;
   for i=1:k
     subplot(1,k,i);
@@ -15,8 +15,8 @@ function[image,index]=select_image(k,options,I)
     else
         set(src,'UserData',1)
         title('Selected');
-        [filename,user_canc]=imsave(src);
-        image=imread(filename);
+        %[filename,user_canc]=imsave(src);
+        %image=imread(filename);
     end
     fprintf('%s:\n',num2str(x));
     index = x;
