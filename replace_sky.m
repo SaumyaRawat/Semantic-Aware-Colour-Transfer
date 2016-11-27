@@ -1,7 +1,7 @@
 %% Compare between decriptors of all images and choose reference image %%
 addpath(genpath('custom_toolboxes'))
-mat_file = ['mat_files/','descriptor_1']; %check filename
-load(mat_file); 
+%%%% MAT FILES %%%%
+load(['mat_files/','descriptor_1']); 
 load(['mat_files/','max_rects']); 
 no_of_images = size(descriptor,2);
 
@@ -9,7 +9,7 @@ I = dir('dataset/image/*.png');
 P = dir('dataset/mask/*.png');
 im_index = 1; %check filename
 
-threshold = 0.5;
+threshold = 4;
 A=imread('input.png');
 target_sky_mask = im2bw(imread('input_mask.png'));
 %target_sky_mask = imresize(target_sky_mask,[500 500]);
@@ -18,7 +18,13 @@ target = imresize(A, [500 500]);
 F = res{1};
 for i=1:size(target,1)
     for j=1:size(target,2)
-        norm_F(i,j,:) = (F(i,j,:) - min(F(i,j,:)))/(max(F(i,j,:))-min(F(i,j,:)));
+        m1 = min(F(i,j,:));
+        m2 = max(F(i,j,:));
+        norm_F(i,j,:) = (F(i,j,:) - m1) / (m2 - m1) ;
+        sum1 = sum(norm_F(i,j,:));
+        norm_F(i,j,:) = norm_F(i,j,:)/sum1;
+    end
+end
 
 %%%%%%%%%% Compute target's descriptor '%%%%%%%%%%%
 H = [];
@@ -45,14 +51,14 @@ global_hist = global_hist/max(max(global_hist));
 H = [H; global_hist];
 target_descriptor = H;
 
-w = waitbar(0,'Finding candidate skies')
 %%%%%%%%%% choose up to 5 skies to display %%%%%%%%%%%
+%w = waitbar(0,'Finding candidate skies')
 chosen_sky = 1;
 no_of_chosen_skies = 5;
 visited = zeros([1,no_of_images]);
 jk = 1; end_flag = 0;
 options = [];
-[T,~,~,max_target_region,tr1,tr2,tc1,tc2] = FindLargestRectangles((target_sky_mask),A);
+[~,~,~,max_target_region,tr1,tr2,tc1,tc2] = FindLargestRectangles((target_sky_mask),A);
 t_width = tc2-tc1;
 t_height = tr2-tr1;
 P_ta = t_width/t_height;
@@ -60,15 +66,20 @@ P_ts = t_width*t_height;
 end_flag = 0; chosen_sky = 1;
 visited = zeros([1,no_of_images]);
 semantic_similarity = [];
+found = 0;
 for k = 1:no_of_images
     source = imread(['dataset/image/',P(k).name]);
     source_sky_mask = im2bw(imread(['dataset/mask/',P(k).name]));
-    
+
     if (max_rects(k).max_source_region == 0)
        continue;
     end
-    [S,max_source_region] = [max_rects(k).S max_rects(k).max_source_region];
-    [sr1,sr2,sc1,sc2] = max_rects(k).index;
+    S = max_rects(k).region; 
+    max_source_region = max_rects(k).max_source_region;
+    sr1 = max_rects(k).index(1);
+    sr2 = max_rects(k).index(2);
+    sc1 = max_rects(k).index(3); 
+    sc2 =  max_rects(k).index(4);
     %% Compute Aspect Ratio and Resolution
     s_width = sc2-sc1;
     s_height = sr2-sr1;
@@ -81,28 +92,30 @@ for k = 1:no_of_images
         options(chosen_sky)=k;
         chosen_sky = chosen_sky + 1;
     end
-    close(w)
-    w = waitbar(k/no_of_images,sprintf('percentage = %2.2f',(k*100)/no_of_images))
+    %close(w)
+    %w = waitbar(k/no_of_images,sprintf('percentage = %2.2f',(k*100)/no_of_images))
     if chosen_sky == 6
         break
     end
 end
-
-%[source,index]=select_image(no_of_chosen_skies,options,I);
+if chosen_sky~=1
+    [source,index]=select_image(no_of_chosen_skies,options,I);
+end
 
 %%%%%%%%% replace sky using the chosen image %%%%%%%%%%%
-%source = imresize(source, [500 500]);
-%target = imresize(target, [500 500]);
-%source_sky_mask = (images(options(index)).maskIm==0);
-%%[~,s_sky_mask] = scene_parse(images(index).image);
-%%source_sky_mask = (s_sky_mask == 0);
-%target_sky_mask = (maskIm == 0);
-%[S,~,~,max_source_region,sr1,sr2,sc1,sc2] = FindLargestRectangles(source_sky_mask,source);
-%[T,~,~,max_target_region,tr1,tr2,tc1,tc2] = FindLargestRectangles(target_sky_mask,target);
-%source_sky = imresize(S,[size(T,1) size(T,2)]);
-%final = target;
-%final(tr1:tr2,tc1:tc2,:) = source_sky;
+[T,tmax_area,tr1,tr2,tc1,tc2]  = find_largest_convex_hull(target_sky_mask,A);
+source_sky = imresize(S,[size(T,1) size(T,2)]);
+final = A;
+for i = 1:size(final,1)
+    for j=1:size(final,2)
+        if(target_sky_mask(i,j)==1)
+            final(i,j,:) = source_sky(i,j,:);
+        end
+    end
+end
+figure;imshowpair(target,final,'montage');str = sprintf('Original & Final Image');title(str);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %source_sky=im2double(source_sky);
 
 %figure('Name','Image for source sky selection','NumberTitle','off')
@@ -126,4 +139,3 @@ end
 %end
 
 %final = reconstruct(blended);
-%figure;imshowpair(target,final,'montage');str = sprintf('Original & Final Image');title(str);

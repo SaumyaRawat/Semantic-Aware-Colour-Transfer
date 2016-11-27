@@ -1,13 +1,13 @@
 %% This file computes the semantic descriptor and saves in variable descriptor(no_of_images).desc in the desc.mat %%
 %reponse_map = 'images_1'; %check filename
-reponse_map = 'fcn_1'; %check filename %for atom
+reponse_map = 'fcn_data_212'; %check filename %for atom
 mat_file = ['mat_files/',reponse_map];
 %mat_file = ['/Neutron9/anjali.shenoy/dip_project/mat_files/',reponse_map];
 
 T = load(mat_file,reponse_map);  
 reponse_map = T.(reponse_map);
 no_of_images = size(reponse_map,2);
-w = waitbar(0,'Computing semantic descriptors')
+%w = waitbar(0,'Computing semantic descriptors')
 I = dir('dataset/image/*.png');
 %I = dir('/Neutron9/anjali.shenoy/dip_project/dataset/image/*.png');
 im_index = 1; %check filename
@@ -39,10 +39,10 @@ for k = 1:no_of_images
     global_hist = global_hist/max(max(global_hist));
     H = [H ; global_hist];
     descriptor(k).desc = H;
-    waitbar(k/no_of_images)
+    %waitbar(k/no_of_images)
     im_index = im_index + 1;
     clear temp, H, im
 end
 close(w)
-save('mat_files/descriptor_1.mat','descriptor')
+save('mat_files/descriptor_212.mat','descriptor')
 %save('/Neutron9/anjali.shenoy/dip_project/mat_files/descriptor_1.mat','descriptor') %for atom
