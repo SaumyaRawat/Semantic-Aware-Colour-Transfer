@@ -1,4 +1,4 @@
-function [L,a,b]=transfer_matched(category, Beta, test_lab, test_region, reference_lab, reference_region)
+function [L,a,b]=transfer_matched(category, Beta, test_lab, test_region, reference_lab, reference_region, cut)
 
 	test_L = test_lab(:,:,1);
 	test_a = test_lab(:,:,2);
@@ -17,7 +17,14 @@ function [L,a,b]=transfer_matched(category, Beta, test_lab, test_region, referen
 	[mu_reference, cov_reference] = getChroma(category,reference_region, reference_lab);
 
 	%Regularise the covariance matrix
-	cov_test(find(cov_test<7.5)) = 7.5;
+	reg=7.5;
+    if cov_test(1,1)<reg
+        cov_test(1,1)=reg;
+    end
+    
+    if cov_test(2,2)<reg
+        cov_test(2,2)=reg;
+    end
 
 	%Calculate T
 	M1 = cov_test^-0.5;
@@ -25,9 +32,7 @@ function [L,a,b]=transfer_matched(category, Beta, test_lab, test_region, referen
 	temp = (M2*cov_reference*M2)^0.5;
 	T = M1*temp*M1;
 
-	L = test_L;
-	L = L+delta;
-	L(find(test_region~=category))=0;
+	
 	a = test_a;
 	a = a-mu_test(1);
 	b = test_b;
@@ -39,8 +44,15 @@ function [L,a,b]=transfer_matched(category, Beta, test_lab, test_region, referen
 	x4 = T(2,2);
 
 	a = (a*x1) + (b*x2) + mu_reference(1);
-	a(find(test_region~=category))=0;
 	b = (a*x3) + (b*x4) + mu_reference(2);
-	b(find(test_region~=category))=0;
+
+	L = repmat(delta, size(test_L));
+	a = a-test_a;
+	b = b-test_b;
+	if cut
+		L(find(test_region~=category))=0;
+		a(find(test_region~=category))=0;
+		b(find(test_region~=category))=0;
+	end
 
 end
