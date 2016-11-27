@@ -1,4 +1,8 @@
 datasets/
 custom_toolboxes/scene_parsing_model/
 dataset/
+*.mat
+*.jpg
+*.png
 mat_files/
+
