@@ -11,5 +11,7 @@
 * Paper : http://www.eecs.harvard.edu/*kalyans/research/skyreplace/SkyReplacement_SIG16.pdf
 * Optprop Toolbox : https://in.mathworks.com/matlabcentral/fileexchange/13788-optprop-a-color-properties-toolbox
 
-## Datasets :
+## Datasets 
 * Dataset of the paper : https://dl.dropboxusercontent.com/u/73240677/SIGGRAPH16/database.zip
+
+#NOTE : Code requires caffe-cpu
