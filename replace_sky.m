@@ -5,7 +5,7 @@ function[rough_mask,I_rep,I_ref,ref_region,norm_F,ref_im_name] = replace_sky(A,t
     P = dir('dataset/mask/*.png');
     target_sky_mask = im2bw(target_sky_mask);
     im_index = 1; %check filename
-    threshold = 4;
+    threshold = 1.9;
     no_of_images = size(descriptor,2);
     %A=imread('input.png');
     %target_sky_mask = im2bw(imread('input_mask.png'));
@@ -64,7 +64,16 @@ function[rough_mask,I_rep,I_ref,ref_region,norm_F,ref_im_name] = replace_sky(A,t
     visited = zeros([1,no_of_images]);
     semantic_similarity = [];
     found = 0;
+
     for k = 1:no_of_images
+        val = norm(descriptor(k).desc - target_descriptor);
+        semantic_similarity = [semantic_similarity ; val];
+    end
+
+    [ASorted AIdx] = sort(semantic_similarity);
+
+    for jk = 2:no_of_images
+        k = AIdx(jk);
         source = imread(['dataset/image/',P(k).name]);
         source_sky_mask = im2bw(imread(['dataset/mask/',P(k).name]));
 
@@ -84,19 +93,16 @@ function[rough_mask,I_rep,I_ref,ref_region,norm_F,ref_im_name] = replace_sky(A,t
         P_ss = s_width*s_height;
         Q_s = min(P_ts,P_ss)/max(P_ts,P_ss);
         Q_a = min(P_ta,P_sa)/max(P_ta,P_sa);
-        semantic_similarity = [semantic_similarity ; max(max(pdist2(descriptor(k).desc,target_descriptor)))];
-        if max(max(pdist2(descriptor(k).desc,target_descriptor)))<threshold && Q_s>0.5 && Q_a>0.5
+        if Q_s>0.5 && Q_a>0.5
             options(chosen_sky)=k;
             chosen_sky = chosen_sky + 1;
         end
-        %close(w)
-        %w = waitbar(k/no_of_images,sprintf('percentage = %2.2f',(k*100)/no_of_images))
-        if chosen_sky == 6
+        if chosen_sky >= 5
             break
         end
     end
     if chosen_sky~=1
-        [index]=select_image(no_of_chosen_skies,options,I);
+        [index]=select_image(4,options,I);
     end
     source = imread(['dataset/image/',I(options(index)).name]);
     ref_im_name = I(options(index)).name;

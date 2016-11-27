@@ -1,12 +1,11 @@
 function[index]=select_image(k,options,I)
   hfig=figure;
   for i=1:k
-    subplot(1,k,i);
+    subplot(2,2,i);
     im = imread(['dataset/image/',I(options(i)).name]);
     h{i}.h = imshow(im);
     set(h{i}.h, 'buttondownfcn', {@loads_of_stuff,i});
   end
-  title(' Select one of the images. Note : close the window when done')
 
   function loads_of_stuff(src,eventdata,x)
     if get(src,'UserData')
