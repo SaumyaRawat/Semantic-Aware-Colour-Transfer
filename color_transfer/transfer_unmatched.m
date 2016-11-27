@@ -1,6 +1,6 @@
 function [L,a,b]=transfer_unmatched(category, Beta, test_lab, test_region, reference_lab, reference_region, cut)
 	%Here category is not matched to any in reference
-	nieghbour_category = getNeighbourhoodCategory(category,test_region);
+	neighbour_category = getNeighbourhoodCategory(category,test_region);
 	%neighbour_category = 13;
 	test_L = test_lab(:,:,1);
 	test_a = test_lab(:,:,2);
