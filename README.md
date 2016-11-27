@@ -1,5 +1,7 @@
 # DIP-Project-Semantic-Aware-Colour-Transfer
 * Implementation of the paper : Sky is Not the Limit: Semantic-Aware Sky Replacement
+* Github Link: https://github.com/SaumyaRawat/DIP-Project-Semantic-Aware-Colour-Transfer.git
+* Report to the project can be found in the repo. 
 
 ## Pipeline 
 * Label Images with FCN model
@@ -14,4 +16,7 @@
 ## Datasets 
 * Dataset of the paper : https://dl.dropboxusercontent.com/u/73240677/SIGGRAPH16/database.zip
 
-#NOTE : Code requires caffe-cpu
+##NOTE : Code 
+* Code requires caffe-cpu
+* Mat files present in mat_files (on git-lfs) are required to run the code
+* main.m consists of the pipeline execution, name of input image from the dataset provided in the dataset folder is added to file1. 
