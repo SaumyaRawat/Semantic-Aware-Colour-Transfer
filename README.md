@@ -14,7 +14,7 @@
 * Optprop Toolbox : https://in.mathworks.com/matlabcentral/fileexchange/13788-optprop-a-color-properties-toolbox
 
 ## Datasets 
-* Dataset of the paper : https://dl.dropboxusercontent.com/u/73240677/SIGGRAPH16/database.zip
+* Dataset of the paper : http://vllab.ucmerced.edu/ytsai/SIGGRAPH16/database.zip 
 
 ##NOTE : Code 
 * Code requires caffe-cpu
