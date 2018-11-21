@@ -10,7 +10,7 @@
 * Transfer colour between target and source-sky images to match with the new sky
 
 ## References 
-* Paper : http://www.eecs.harvard.edu/*kalyans/research/skyreplace/SkyReplacement_SIG16.pdf
+* Paper : http://www.eecs.harvard.edu/~kalyans/research/skyreplace/SkyReplacement_SIG16.pdf
 * Optprop Toolbox : https://in.mathworks.com/matlabcentral/fileexchange/13788-optprop-a-color-properties-toolbox
 
 ## Datasets 
